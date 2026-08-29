@@ -42,6 +42,6 @@ public class Manga{
 		stock = s;
 	}
 	public String toString(){
-		return titre + " " + numeroTome + " par " + auteur + "/prix : " + prix + "(stock:" + stock + ")";
+		return titre + " tome " + numeroTome + " par " + auteur + " prix : " + String.format("%.2f",prix) + "euros (stock:" + stock + ")";
 	}
 }
