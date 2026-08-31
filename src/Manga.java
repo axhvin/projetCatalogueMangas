@@ -4,21 +4,22 @@
  */
 
 public class Manga{
+	private int id;
 	private String titre;
 	private String auteur;
 	private int numeroTome;
 	private double prix;
 	private int stock;
-	private static int cpt = 0;
-	public final int id;
-	public Manga(String titre, String auteur, int numeroTome, double prix, int stock){
+	public Manga(int id, String titre, String auteur, int numeroTome, double prix, int stock){
+		this.id = id;
 		this.titre = titre;
 		this.auteur = auteur;
 		this.numeroTome = numeroTome;
 		this.prix = prix;
 		this.stock = stock;
-		cpt++;
-		id = cpt;
+	}
+	public int getId(){
+		return id;
 	}
 	public String getTitre(){
 		return titre;
