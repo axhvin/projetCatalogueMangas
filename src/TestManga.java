@@ -12,6 +12,9 @@ import java.sql.Statement;
  
 public class TestManga{
 	private static final Scanner scan = new Scanner(System.in);
+	public static Connection getConnection() throws SQLException{
+		return DriverManager.getConnection("jdbc:sqlite:manga.db");
+	}
 	public static int choixMenu(){
 		System.out.println("________Menu________");
 		System.out.println(" 0 - Déconnexion ");
