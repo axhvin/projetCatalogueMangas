@@ -19,7 +19,7 @@ public class TestManga{
 		System.out.println("________Menu________");
 		System.out.println(" 0 - Déconnexion ");
 		System.out.println(" 1 - Admin ");
-		System.out.println(" 2 - Utilisateur ");
+		System.out.println(" 2 - User ");
 		System.out.println("Entrer un choix : ");
 		return scan.nextInt();
 	}
@@ -31,7 +31,7 @@ public class TestManga{
 		return scan.nextInt();
 	}
 	public static int choixMenu2(){
-		System.out.println("________Utilisateur________");
+		System.out.println("________User________");
 		System.out.println(" 0 - Déconnexion ");
 		System.out.println(" 1 - Recherche d'un manga ");
 		return scan.nextInt();
@@ -41,18 +41,27 @@ public class TestManga{
 		while (choix!=0){
 			switch (choix) {
 				case 1:
-					int choix1 = choixMenu1();
-					while (choix1!=0) {
-						switch (choix1) {
-							case 1:
-								
-								break;
-							case 2:
+					scan.nextLine();
+					System.out.println("Mot de passe à saisir : ");
+					String s = scan.nextLine();
+					if (s.equals(System.getenv("MDP"))){
+						int choix1 = choixMenu1();
+						while (choix1!=0) {
+							switch (choix1) {
+								case 1:
+									
+									break;
+								case 2:
 
-								break;
-							default:
-								System.out.println("Choix " + choix1 + " inconnu");
+									break;
+								default:
+									System.out.println("Choix " + choix1 + " inconnu");
+							}
+							choix1 = choixMenu1();
 						}
+					}
+					else{
+						System.out.println("Mot de passe incorrect");
 					}
 					break;
 				case 2:
@@ -66,11 +75,13 @@ public class TestManga{
 							default:
 								System.out.println("Choix " + choix2 + " inconnu");
 						}
+						choix2 = choixMenu2();
 					}
 					break;
 				default:
 					System.out.println("Choix " + choix + " inconnu");
 			}
+			choix = choixMenu();
 		}
 		try (
 			Connection connection = DriverManager.getConnection("jdbc:sqlite:manga.db");
