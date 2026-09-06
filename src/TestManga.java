@@ -58,6 +58,7 @@ public class TestManga{
 					String s = scan.nextLine();
 					if (s.equals(System.getenv("MDP"))){
 						int choix1 = choixMenu1();
+						scan.nextLine();
 						while (choix1!=0) {
 							switch (choix1) {
 								case 1:
@@ -67,13 +68,16 @@ public class TestManga{
 									String auteur = scan.nextLine();
 									System.out.println("Entrez le numéro du tome : ");
 									int tome = scan.nextInt();
+									scan.nextLine();
 									System.out.println("Entrez le prix du manga : ");
 									double prix = scan.nextDouble();
+									scan.nextLine();
 									System.out.println("Entrez le stock du manga : ");
 									int stock = scan.nextInt();
+									scan.nextLine();
 									try (
 										Connection connection = getConnection();
-										PreparedStatement pstmt = connection.prepareStatement("insert into Manga values (?, ?, ?, ?, ?)")
+										PreparedStatement pstmt = connection.prepareStatement("insert into Manga(titre, auteur, tome, prix, stock) values (?, ?, ?, ?, ?)")
 										)
 										{
 											pstmt.setString(1, titre);
@@ -99,9 +103,45 @@ public class TestManga{
 									} catch(SQLException e){
 										e.printStackTrace(System.err);
 									}
+									scan.nextLine();
 									break;
 								case 3:
-
+									System.out.println("Entrez le titre d'un manga : ");
+									String titre1 = scan.nextLine();
+									System.out.println("Entrez le numéro du tome (-1 pour tous les afficher) : ");
+									int tome1 = scan.nextInt();
+									String sql = "select * from Manga where lower(titre) like lower(?)";
+									boolean hasTome = (tome1!=-1);
+									if (hasTome){
+										sql += " and tome = ?";
+									}
+									try (
+										Connection connection = getConnection();
+										Statement statement = connection.createStatement();
+										PreparedStatement pstmt = connection.prepareStatement(sql);
+										)
+										{
+											pstmt.setString(1, "%" + titre1 + "%");
+											if (hasTome){
+												pstmt.setInt(2, tome1);
+											}
+											pstmt.executeUpdate();
+											ResultSet resultat = statement.executeQuery("select * from Manga");
+											System.out.printf("%-3s | %-20s | %-20s | %-5s | %-6s | %-5s%n", "ID", "Titre", "Auteur", "Tome", "Prix", "Stock");
+											System.out.println("----+----------------------+----------------------+-------+--------+-------");
+											while (resultat.next()){
+												int id2 = resultat.getInt("id");
+												String titre2 = resultat.getString("titre");
+												String auteur2 = resultat.getString("auteur");
+												int tome2 = resultat.getInt("tome");
+												double prix2 = resultat.getDouble("prix");
+												int stock2 = resultat.getInt("stock");
+												System.out.printf("%-3d | %-20s | %-20s | %-5d | %-5.2f€ | %-5d%n", id2, titre2, auteur2, tome2, prix2, stock2);
+											}
+									} catch(SQLException e){
+										e.printStackTrace(System.err);
+									}
+									scan.nextLine();
 									break;
 								default:
 									System.out.println("Choix " + choix1 + " inconnu");
@@ -131,29 +171,6 @@ public class TestManga{
 					System.out.println("Choix " + choix + " inconnu");
 			}
 			choix = choixMenu();
-		}
-		try (
-			Connection connection = DriverManager.getConnection("jdbc:sqlite:manga.db");
-			Statement statement = connection.createStatement();
-			)
-			{
-				statement.executeUpdate("drop table if exists Manga");
-				statement.executeUpdate("create table if not exists Manga (id INTEGER PRIMARY KEY AUTOINCREMENT, titre TEXT NOT NULL, auteur TEXT NOT NULL, tome INTEGER, prix REAL, stock INTEGER)");
-				statement.executeUpdate("insert into Manga values(1,'One Piece','Eichiro Oda',1,6.90,20)");
-				ResultSet resultat = statement.executeQuery("select * from Manga");
-				System.out.printf("%-3s | %-20s | %-20s | %-5s | %-6s | %-5s%n", "ID", "Titre", "Auteur", "Tome", "Prix", "Stock");
-				System.out.println("----+----------------------+----------------------+-------+--------+-------");
-				while (resultat.next()){
-					int id = resultat.getInt("id");
-					String titre = resultat.getString("titre");
-					String auteur = resultat.getString("auteur");
-					int tome = resultat.getInt("tome");
-					double prix = resultat.getDouble("prix");
-					int stock = resultat.getInt("stock");
-					System.out.printf("%-3d | %-20s | %-20s | %-5d | %-5.2f€ | %-5d%n", id, titre, auteur, tome, prix, stock);
-				}
-		} catch(SQLException e){
-			e.printStackTrace(System.err);
 		}
 	}
 }
