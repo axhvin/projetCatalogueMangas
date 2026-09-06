@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 /** 
  * Cette classe va gérer le test de Manga.
@@ -28,6 +29,7 @@ public class TestManga{
 		System.out.println(" 0 - Déconnexion ");
 		System.out.println(" 1 - Insérer un manga ");
 		System.out.println(" 2 - Suppression d'un manga ");
+		System.out.println(" 3 - Recherche d'un manga ");
 		return scan.nextInt();
 	}
 	public static int choixMenu2(){
@@ -38,6 +40,16 @@ public class TestManga{
 	}
 	public static void main(String[] args){
 		int choix = choixMenu();
+		try (
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			)
+			{
+				statement.executeUpdate("drop table if exists Manga");
+				statement.executeUpdate("create table if not exists Manga (id INTEGER PRIMARY KEY AUTOINCREMENT, titre TEXT NOT NULL, auteur TEXT NOT NULL, tome INTEGER, prix REAL, stock INTEGER)");
+		} catch(SQLException e){
+			e.printStackTrace(System.err);
+		}
 		while (choix!=0){
 			switch (choix) {
 				case 1:
@@ -49,9 +61,46 @@ public class TestManga{
 						while (choix1!=0) {
 							switch (choix1) {
 								case 1:
-									
+									System.out.println("Entrez le titre d'un manga : ");
+									String titre = scan.nextLine();
+									System.out.println("Entrez le nom d'un auteur : ");
+									String auteur = scan.nextLine();
+									System.out.println("Entrez le numéro du tome : ");
+									int tome = scan.nextInt();
+									System.out.println("Entrez le prix du manga : ");
+									double prix = scan.nextDouble();
+									System.out.println("Entrez le stock du manga : ");
+									int stock = scan.nextInt();
+									try (
+										Connection connection = getConnection();
+										PreparedStatement pstmt = connection.prepareStatement("insert into Manga values (?, ?, ?, ?, ?)")
+										)
+										{
+											pstmt.setString(1, titre);
+											pstmt.setString(2, auteur);
+											pstmt.setInt(3, tome);
+											pstmt.setDouble(4, prix);
+											pstmt.setInt(5, stock);
+											pstmt.executeUpdate();
+									} catch(SQLException e){
+										e.printStackTrace(System.err);
+									}
 									break;
 								case 2:
+									System.out.println("Entrez l'identifiant du manga ; ");
+									int id = scan.nextInt();
+									try (
+										Connection connection = getConnection();
+										PreparedStatement pstmt = connection.prepareStatement("delete from Manga where id=?");
+										)
+										{
+											pstmt.setInt(1, id);
+											pstmt.executeUpdate();
+									} catch(SQLException e){
+										e.printStackTrace(System.err);
+									}
+									break;
+								case 3:
 
 									break;
 								default:
