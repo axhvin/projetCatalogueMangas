@@ -45,8 +45,7 @@ public class TestManga{
 			Statement statement = connection.createStatement();
 			)
 			{
-				statement.executeUpdate("drop table if exists Manga");
-				statement.executeUpdate("create table if not exists Manga (id INTEGER PRIMARY KEY AUTOINCREMENT, titre TEXT NOT NULL, auteur TEXT NOT NULL, tome INTEGER, prix REAL, stock INTEGER)");
+				statement.executeUpdate("create table if not exists Manga (id INTEGER PRIMARY KEY AUTOINCREMENT, titre TEXT NOT NULL, auteur TEXT NOT NULL, tome INTEGER, prix REAL, stock INTEGER, unique(titre, tome))");
 		} catch(SQLException e){
 			e.printStackTrace(System.err);
 		}
@@ -58,10 +57,10 @@ public class TestManga{
 					String s = scan.nextLine();
 					if (s.equals(System.getenv("MDP"))){
 						int choix1 = choixMenu1();
-						scan.nextLine();
 						while (choix1!=0) {
 							switch (choix1) {
 								case 1:
+									scan.nextLine();
 									System.out.println("Entrez le titre d'un manga : ");
 									String titre = scan.nextLine();
 									System.out.println("Entrez le nom d'un auteur : ");
@@ -106,6 +105,7 @@ public class TestManga{
 									scan.nextLine();
 									break;
 								case 3:
+									scan.nextLine();
 									System.out.println("Entrez le titre d'un manga : ");
 									String titre1 = scan.nextLine();
 									System.out.println("Entrez le numéro du tome (-1 pour tous les afficher) : ");
@@ -117,7 +117,6 @@ public class TestManga{
 									}
 									try (
 										Connection connection = getConnection();
-										Statement statement = connection.createStatement();
 										PreparedStatement pstmt = connection.prepareStatement(sql);
 										)
 										{
@@ -125,8 +124,7 @@ public class TestManga{
 											if (hasTome){
 												pstmt.setInt(2, tome1);
 											}
-											pstmt.executeUpdate();
-											ResultSet resultat = statement.executeQuery("select * from Manga");
+											ResultSet resultat = pstmt.executeQuery();
 											System.out.printf("%-3s | %-20s | %-20s | %-5s | %-6s | %-5s%n", "ID", "Titre", "Auteur", "Tome", "Prix", "Stock");
 											System.out.println("----+----------------------+----------------------+-------+--------+-------");
 											while (resultat.next()){
