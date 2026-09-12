@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
  * @author Thayananthan Axhvin
  */
  
-public class TestManga{
+public class Main{
 	private static final Scanner scan = new Scanner(System.in);
 	public static Connection getConnection() throws SQLException{
 		return DriverManager.getConnection("jdbc:sqlite:manga.db");
@@ -66,26 +66,45 @@ public class TestManga{
 									String titre = scan.nextLine();
 									System.out.println("Entrez le nom d'un auteur : ");
 									String auteur = scan.nextLine();
-									System.out.println("Entrez le numéro du tome : ");
-									int tome = scan.nextInt();
-									scan.nextLine();
-									System.out.println("Entrez le prix du manga : ");
-									double prix = scan.nextDouble();
-									scan.nextLine();
-									System.out.println("Entrez le stock du manga : ");
-									int stock = scan.nextInt();
-									scan.nextLine();
+									System.out.println("Comnbien de tomes voulez vous ajouter ?");
+									int nbTomes = scan.nextInt();
+									System.out.println("Les tomes ont il un prix fixe ? (answer true or false)");
+									boolean prixUnique = scan.nextBoolean();
 									try (
 										Connection connection = getConnection();
 										PreparedStatement pstmt = connection.prepareStatement("insert into Manga(titre, auteur, tome, prix, stock) values (?, ?, ?, ?, ?)")
 										)
 										{
-											pstmt.setString(1, titre);
-											pstmt.setString(2, auteur);
-											pstmt.setInt(3, tome);
-											pstmt.setDouble(4, prix);
-											pstmt.setInt(5, stock);
-											pstmt.executeUpdate();
+											System.out.println("Saisissez le prix fixe : (-1 sinon)");
+											double prixFixe = scan.nextDouble();
+											for (int i=0;i<nbTomes;i++){
+												if (prixUnique){
+													System.out.println("Entrez le numéro du tome : ");
+													int tome = scan.nextInt();
+													System.out.println("Saisissez le stock : ");
+													int stock = scan.nextInt();
+													pstmt.setString(1, titre);
+													pstmt.setString(2, auteur);
+													pstmt.setInt(3, tome);
+													pstmt.setDouble(4, prixFixe);
+													pstmt.setInt(5, stock);
+													pstmt.executeUpdate();
+												}
+												else{
+													System.out.println("Entrez le numéro du tome : ");
+													int tome = scan.nextInt();
+													System.out.println("Saisissez le prix du manga : ");
+													double prix = scan.nextDouble();
+													System.out.println("Saisissez le stock : ");
+													int stock = scan.nextInt();
+													pstmt.setString(1, titre);
+													pstmt.setString(2, auteur);
+													pstmt.setInt(3, tome);
+													pstmt.setDouble(4, prix);
+													pstmt.setInt(5, stock);
+													pstmt.executeUpdate();
+												}
+											}
 									} catch(SQLException e){
 										e.printStackTrace(System.err);
 									}
