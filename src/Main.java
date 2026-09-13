@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,36 +12,9 @@ import java.sql.PreparedStatement;
  
 public class Main{
 	private static final Scanner scan = new Scanner(System.in);
-	public static Connection getConnection() throws SQLException{
-		return DriverManager.getConnection("jdbc:sqlite:manga.db");
-	}
-	public static int choixMenu(){
-		System.out.println("________Menu________");
-		System.out.println(" 0 - Déconnexion ");
-		System.out.println(" 1 - Admin ");
-		System.out.println(" 2 - User ");
-		System.out.println("Entrer un choix : ");
-		return scan.nextInt();
-	}
-	public static int choixMenu1(){
-		System.out.println("________Admin________");
-		System.out.println(" 0 - Déconnexion ");
-		System.out.println(" 1 - Insérer un manga ");
-		System.out.println(" 2 - Suppression d'un manga ");
-		System.out.println(" 3 - Recherche d'un manga ");
-		return scan.nextInt();
-	}
-	public static int choixMenu2(){
-		System.out.println("________User________");
-		System.out.println(" 0 - Déconnexion ");
-		System.out.println(" 1 - Catalogue");
-		System.out.println(" 2 - Recherche d'un manga ");
-		return scan.nextInt();
-	}
 	public static void main(String[] args){
-		int choix = choixMenu();
 		try (
-			Connection connection = getConnection();
+			Connection connection = SqliteConnection.getConnection();
 			Statement statement = connection.createStatement();
 			)
 			{
@@ -50,6 +22,7 @@ public class Main{
 		} catch(SQLException e){
 			e.printStackTrace(System.err);
 		}
+		int choix = Menu.choixMenu(scan);
 		while (choix!=0){
 			switch (choix) {
 				case 1:
@@ -57,7 +30,7 @@ public class Main{
 					System.out.println("Mot de passe à saisir : ");
 					String s = scan.nextLine();
 					if (s.equals(System.getenv("MDP"))){
-						int choix1 = choixMenu1();
+						int choix1 = Menu.choixMenu1(scan);
 						while (choix1!=0) {
 							switch (choix1) {
 								case 1:
@@ -71,7 +44,7 @@ public class Main{
 									System.out.println("Les tomes ont il un prix fixe ? (answer true or false)");
 									boolean prixUnique = scan.nextBoolean();
 									try (
-										Connection connection = getConnection();
+										Connection connection = SqliteConnection.getConnection();
 										PreparedStatement pstmt = connection.prepareStatement("insert into Manga(titre, auteur, tome, prix, stock) values (?, ?, ?, ?, ?)")
 										)
 										{
@@ -113,7 +86,7 @@ public class Main{
 									System.out.println("Entrez l'identifiant du manga ; ");
 									int id = scan.nextInt();
 									try (
-										Connection connection = getConnection();
+										Connection connection = SqliteConnection.getConnection();
 										PreparedStatement pstmt = connection.prepareStatement("delete from Manga where id=?");
 										)
 										{
@@ -136,7 +109,7 @@ public class Main{
 										sql += " and tome = ?";
 									}
 									try (
-										Connection connection = getConnection();
+										Connection connection = SqliteConnection.getConnection();
 										PreparedStatement pstmt = connection.prepareStatement(sql);
 										)
 										{
@@ -164,7 +137,7 @@ public class Main{
 								default:
 									System.out.println("Choix " + choix1 + " inconnu");
 							}
-							choix1 = choixMenu1();
+							choix1 = Menu.choixMenu1(scan);
 						}
 					}
 					else{
@@ -172,13 +145,13 @@ public class Main{
 					}
 					break;
 				case 2:
-					int choix2 = choixMenu2();
+					int choix2 = Menu.choixMenu2(scan);
 					while (choix2!=0) {
 						switch (choix2) {
 							case 1:
 								scan.nextLine();
 								try (
-									Connection connection = getConnection();
+									Connection connection = SqliteConnection.getConnection();
 									Statement statement = connection.createStatement();
 								    )
 									{
@@ -211,7 +184,7 @@ public class Main{
 									sql += " and tome = ?";
 								}
 								try (
-									Connection connection = getConnection();
+									Connection connection = SqliteConnection.getConnection();
 									PreparedStatement pstmt = connection.prepareStatement(sql);
 									)
 									{
@@ -239,13 +212,13 @@ public class Main{
 							default:
 								System.out.println("Choix " + choix2 + " inconnu");
 						}
-						choix2 = choixMenu2();
+						choix2 = Menu.choixMenu2(scan);
 					}
 					break;
 				default:
 					System.out.println("Choix " + choix + " inconnu");
 			}
-			choix = choixMenu();
+			choix = Menu.choixMenu(scan);
 		}
 	}
 }
