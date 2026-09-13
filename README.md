@@ -5,11 +5,11 @@ This project implements a command-line interface to interact with a local databa
 ### Key Features
 * **Admin Management**
 * Connection with password
-* Insertion of manga with title, author,... and optimized to insert many tomes
-* Delete manga with id who allocate automatically
+* Insertion of manga with title, author,... and bulk insertion many tomes
+* Delete manga with id which is allocated automatically
 * Search in database
 * **User Consultation**
-* Catalog : Full list of manga in database
+* Catalog : Full list of mangas in database
 * Search in database
 ### How to run
 * Install Java
