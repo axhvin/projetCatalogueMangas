@@ -17,3 +17,4 @@ This project implements a command-line interface to interact with a local databa
 * Navigate to the src directory
 * javac -cp .:../lib/sqlite-jdbc-3.53.4.0.jar *.java
 * java -cp .:../lib/sqlite-jdbc-3.53.4.0.jar Main
+* export MDP = '...' to create passwword for admin
